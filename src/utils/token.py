@@ -9,23 +9,23 @@ ALGORITHM = str(os.environ.get("ALGORITHM"))
 
 def get_encode_token(id):
     payload = {
-        "emp_id" : id,
+        "id" : id,
         "exp" : datetime.now() + timedelta(minutes=10)
     }
     access_token = jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
     print(type(access_token))
     return access_token
 
-def decode_token_emp_id(token):
+def decode_token_id(token):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        emp_id = payload.get("emp_id")
-        if not emp_id:
+        id = payload.get("id")
+        if not id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Invalid token",
             )
-        return emp_id
+        return id
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -34,10 +34,11 @@ def decode_token_emp_id(token):
 
 
 
-def get_token_login(emp_name,password):
+def get_token_login(first_name,last_name,password):
     payload = {
-        "emp_name": emp_name,
-        "emp_password": password,
+        "first_name": first_name,
+        "last_name" : last_name,
+        "password": password,
         "exp": datetime.utcnow() + timedelta(minutes=10),
     }
     access_token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
@@ -47,26 +48,26 @@ def get_token_login(emp_name,password):
 
 
 
-def decode_token_emp_name(token):
+def decode_token_first_name(token):
     try:
         payload = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
-        emp_name = payload.get("emp_name")
-        if not emp_name:
+        first_name = payload.get("first_name")
+        if not first_name:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Invalid token",
             )
-        return emp_name
+        return first_name
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid token",
         )
-        
+
 def decode_token_password(token):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        password = payload.get("emp_password")
+        password = payload.get("password")
         if not password:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
