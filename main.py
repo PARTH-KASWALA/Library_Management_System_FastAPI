@@ -1,1 +1,6 @@
-BFR,G TK VASFGEPGRTYH ALSADFN FFAS FNCSDFNIFN SDF J DFKOLXCMW ,M,X;WEMOI KJERIIJZSMFA;ADNS FEPDWFERJ FJM[PAFRMMDKFM CCSDF LWECMSC JF CJ F  ]
+from fastapi import FastAPI
+from src.routers import routers_Lib
+
+app = FastAPI
+
+app.include_router(routers_Lib)
