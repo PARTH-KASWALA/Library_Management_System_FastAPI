@@ -17,7 +17,7 @@ if config.config_file_name is not None:
 
 from dotenv import load_dotenv
 from database.database import Base
-from src.models.models_Lib import Emp
+from src.models.models_Lib import User
 import os
 load_dotenv()
 db_url = os.environ.get("DB_URL")

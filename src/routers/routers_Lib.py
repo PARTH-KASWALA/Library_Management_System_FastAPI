@@ -47,3 +47,46 @@ def add_user(User:Usercreate):
 
 
 
+#-----------------add_user---------------------------------------
+
+
+@router.post("/users/", response_model=UserBase)
+def add_user(user:Usercreate):
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    #hashed_password = get_password_hash(user.password)
+    db_user = User(email=user.email, first_name=user.first_name, last_name=user.last_name, password=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+
+
+#--------------update_user--------------------------------------
+@router.put("/users/{user_id}", response_model=UserBase)
+def update_user(user_id: int, user: UserUpdate):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.first_name = user.first_name
+    db_user.last_name = user.last_name
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+
+#---------------delete User-------------------------------
+@router.put("/users/delete/{user_id}", response_model=UserBase)
+def delete_user(user_id: int):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.is_deleted = True
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+

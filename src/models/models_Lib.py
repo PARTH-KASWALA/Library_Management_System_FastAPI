@@ -16,3 +16,17 @@ class User(Base):
     is_deleted=Column(Boolean,default=False)
     created_at=Column(DateTime,default=datetime.now)
     modified_at = Column(DateTime,default=datetime.now,onupdate=datetime.now)
+
+
+
+
+class OTP(Base):
+    __tablename__ = "otps"
+
+    id = Column(Integer, primary_key=True, default=str(uuid.uuid4()))
+    otp = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    user = relationship("User", back_populates="otps")
+
+#User.otps = relationship("OTP", order_by=OTP.id, back_populates="user")
