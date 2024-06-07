@@ -1,7 +1,8 @@
 from fastapi import FastAPI,HTTPException,APIRouter,Depends,Header
 from database.database import SessionLocal
-from src.models.models_Lib import User
-from src.schemas.schemas_Lib import  UserBase,Usercreate,UserUpdate,UserPasswordReset
+from src.models.
+import User
+from src.schemas.schemas_Lib import  UserBase,Usercreate,UserUpdate,UserPasswordReset,OTPRequest,OTPVerify
 import uuid
 from passlib.context import CryptContext
 from typing import List
@@ -90,3 +91,43 @@ def delete_user(user_id: int):
     db.refresh(db_user)
     return db_user
 
+
+
+#--------------Foreget Password---------------------------------
+@router.post("/users/forget-password", response_model=UserBase)
+def Foreget_password(user : UserPasswordReset):
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    hashed_password = get_password_hash(user.new_password)
+    db_user.password = hashed_password
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+#--------------OTP Verification--------------------------------
+
+@router.post("/users/verify-otp", response_model=UserBase)
+def verify_otp(request: OTPVerify):
+    db_user = db.query(User).filter(User.email == request.email).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_otp = db.query(OTP).filter(OTP.user_id == db_user.id, OTP.otp == request.otp).first()
+    if not db_otp:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
+    db.query(OTP).filter(OTP.user_id == db_user.id).delete()
+    db.commit()
+    return {"message": "OTP verified successfully"}
+
+
+#-------------Get Token------------------------------------------
+
+@router.get("/get_token")
+def get_Token(id: str,email: str, emp_name: str):
+    access_token = get_Token(id,email,emp_name)
+
+    return access_token
+
+
+
+#--------------------------

@@ -29,4 +29,4 @@ class OTP(Base):
     created_at = Column(DateTime, default=datetime.now)
     user = relationship("User", back_populates="otps")
 
-#User.otps = relationship("OTP", order_by=OTP.id, back_populates="user")
+User.otps = relationship("OTP", order_by=OTP.id, back_populates="user")
