@@ -1,7 +1,7 @@
-from fastapi import FastAPI,HTTPException,APIRouter,Depends,Header
+from fastapi import FastAPI,HTTPException,APIRouter,Depends,Header,status
 from database.database import SessionLocal
-from src.models.
-import User
+from src.models.models_Lib import User,OTP
+# import User
 from src.schemas.schemas_Lib import  UserBase,Usercreate,UserUpdate,UserPasswordReset,OTPRequest,OTPVerify
 import uuid
 from passlib.context import CryptContext
@@ -9,6 +9,8 @@ from typing import List
 # from src.utils.token import get_encode_token,get_token_login,decode_token_emp_id,decode_token_emp_name,decode_token_password
 # from logs.log_config import logger
 from jose import JWTError, jwt
+from src.utils.otp_utils import generate_otp, save_otp_to_db, send_otp_email
+# from src.utils.auth import authenticate_user, create_access_token, get_current_user, get_password_hash, get_db
 
 
 # from passlib.context import CryptContext
@@ -51,17 +53,17 @@ def add_user(User:Usercreate):
 #-----------------add_user---------------------------------------
 
 
-@router.post("/users/", response_model=UserBase)
-def add_user(user:Usercreate):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    #hashed_password = get_password_hash(user.password)
-    db_user = User(email=user.email, first_name=user.first_name, last_name=user.last_name, password=hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+# @router.post("/users/", response_model=UserBase)
+# def add_user(user:Usercreate):
+#     db_user = db.query(User).filter(User.email == user.email).first()
+#     if db_user:
+#         raise HTTPException(status_code=400, detail="Email already registered")
+#     #hashed_password = get_password_hash(user.password)
+#     db_user = User(email=user.email, first_name=user.first_name, last_name=user.last_name, password=hashed_password)
+#     db.add(db_user)
+#     db.commit()
+#     db.refresh(db_user)
+#     return db_user
 
 
 
@@ -94,16 +96,28 @@ def delete_user(user_id: int):
 
 
 #--------------Foreget Password---------------------------------
-@router.post("/users/forget-password", response_model=UserBase)
-def Foreget_password(user : UserPasswordReset):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    hashed_password = get_password_hash(user.new_password)
-    db_user.password = hashed_password
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+# @router.post("/users/forget-password", response_model=UserBase)
+# def Foreget_password(user : UserPasswordReset):
+#     db_user = db.query(User).filter(User.email == user.email).first()
+#     if not db_user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     hashed_password = get_password_hash(user.new_password)
+#     db_user.password = hashed_password
+#     db.commit()
+#     db.refresh(db_user)
+#     return db_user
+
+
+#-------------- Genrate OTP-------------------------------
+# @router.post("/users/generate-otp", response_model=UserBase)
+# async def generate_otp_for_user(request: OTPRequest):
+#     db_user = db.query(User).filter(User.email == request.email).first()
+#     if not db_user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     otp = generate_otp()
+#     save_otp_to_db(db, db_user, otp)
+#     await send_otp_email(request.email, otp)
+#     return {"message": "OTP sent to email"}
 
 #--------------OTP Verification--------------------------------
 

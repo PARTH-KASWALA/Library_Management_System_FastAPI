@@ -27,10 +27,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     email: str | None = None
 
-
 class OTPRequest(BaseModel):
     email: EmailStr
-
 class OTPVerify(BaseModel):
     email: EmailStr
     otp: str
