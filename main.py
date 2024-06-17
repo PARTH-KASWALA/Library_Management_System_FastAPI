@@ -1,9 +1,8 @@
 from fastapi import FastAPI
-from src.routers.routers_Lib import router
-from src.routers.otp import Otp
+from src.routers.user import user,Otp
+# from src.routers.otp import Otp
 app = FastAPI()
 
-app.include_router(router)
+app.include_router(user)
 app.include_router(Otp)
 
-   
