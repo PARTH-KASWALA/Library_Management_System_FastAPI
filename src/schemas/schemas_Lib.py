@@ -48,3 +48,12 @@ class OTPVerify(BaseModel):
     email: EmailStr
     otp: str
 
+
+
+
+
+
+
+
+
+
