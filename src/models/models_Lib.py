@@ -99,21 +99,22 @@ class Category(Base):
 #     category = relationship("Category", back_populates="books")
 
 
-class Book(Base):
-    __tablename__ = "books"
-    id = Column(String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
-    title = Column(String(100), nullable=False)
-    author_id = Column(String(50), ForeignKey('authors.id'))
-    category_id = Column(String(50), ForeignKey('categories.id'))
-    isbn = Column(String(13), unique=True, nullable=False)
-    description = Column(Text, nullable=True)
-    published_date = Column(Date, nullable=False)
-    copies_available = Column(Integer, nullable=False, default=1)
-    created_at = Column(DateTime, default=datetime.now)
-    modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+# class Book(Base):
+#     __tablename__ = "books"
+#     id = Column(String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
+#     title = Column(String(100), nullable=False)
+#     author_id = Column(String(50), ForeignKey('authors.id'))
+#     category_id = Column(String(50), ForeignKey('categories.id'))
+#     isbn = Column(String(13), unique=True, nullable=False)
+#     description = Column(Text, nullable=True)
+#     published_date = Column(Date, nullable=False)
+#     copies_available = Column(Integer, nullable=False, default=1)
+#     created_at = Column(DateTime, default=datetime.now)
+#     modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    author = relationship("Author", back_populates="books")
-    category = relationship("Category", back_populates="books")
+#     author = relationship("Author", back_populates="books")
+#     category = relationship("Category", back_populates="books")
+    # Category.books = relationship("Book",back_populates="category")
     # borrowings = relationship("Borrowing", back_populates="book")
 
 # class Borrowing(Base):
@@ -130,12 +131,59 @@ class Book(Base):
 #     user = relationship("User", back_populates="borrowings")
 #     book = relationship("Book", back_populates="borrowings")
 
+# class Borrowing(Base):
+#     __tablename__ = "borrowings"
+
+#     id = Column(String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
+#     user_id = Column(String(50), ForeignKey('users.id'), nullable=False)
+#     book_id = Column(String(50), ForeignKey(' books.id'), nullable=False)
+#     borrow_date = Column(DateTime, default=datetime.now)
+#     return_date = Column(DateTime, nullable=True)
+#     due_date = Column(DateTime, default=lambda: datetime.now() + timedelta(days=14))
+#     is_returned = Column(Boolean, default=False)
+#     created_at = Column(DateTime, default=datetime.now)
+#     modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+# class Reservation(Base):
+#     __tablename__ = "reservations"
+
+#     id = Column(String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
+#     user_id = Column(String(50), ForeignKey('users.id'), nullable=False)
+#     book_id = Column(String(50), ForeignKey('books.id'), nullable=False)
+#     reservation_date = Column(DateTime, default=datetime.now)
+#     is_active = Column(Boolean, default=True)
+#     created_at = Column(DateTime, default=datetime.now)
+#     modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+
+
+
+
+
+
+class Book(Base):
+    __tablename__ = "books"
+    id = Column(String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = Column(String(100), nullable=False)
+    author_id = Column(String(50), ForeignKey('authors.id'))
+    category_id = Column(String(50), ForeignKey('categories.id'))
+    isbn = Column(String(13), unique=True, nullable=False)
+    description = Column(Text, nullable=True)
+    published_date = Column(Date, nullable=False)
+    copies_available = Column(Integer, nullable=False, default=1)
+    created_at = Column(DateTime, default=datetime.now)
+    modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    author = relationship("Author", back_populates="books")
+    category = relationship("Category", back_populates="books")
+
 class Borrowing(Base):
     __tablename__ = "borrowings"
 
     id = Column(String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(50), ForeignKey('users.id'), nullable=False)
-    book_id = Column(String(50), ForeignKey(' books.id'), nullable=False)
+    book_id = Column(String(50), ForeignKey('books.id'), nullable=False)
     borrow_date = Column(DateTime, default=datetime.now)
     return_date = Column(DateTime, nullable=True)
     due_date = Column(DateTime, default=lambda: datetime.now() + timedelta(days=14))
@@ -153,3 +201,6 @@ class Reservation(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.now)
     modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    
+    
+

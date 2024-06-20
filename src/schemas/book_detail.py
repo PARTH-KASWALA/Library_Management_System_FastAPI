@@ -10,6 +10,10 @@ class BookBase(BaseModel):
 
 class BookCreate(BookBase):
     copies_available: int
+    author_id : int
+    category_id : int
+    description : str
+
 
 class Book(BookBase):
     id: str
