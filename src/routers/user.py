@@ -272,3 +272,25 @@ def verify_otp(otp_verify: OTPVerify):
     db.commit()
 
     return {"message": "OTP verified successfully"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

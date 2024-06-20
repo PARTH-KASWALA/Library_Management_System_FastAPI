@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.database import SessionLocal
 from src.models.models_Lib import Book, Borrowing, Reservation, User
-from src.schemas.schemas_Lib import BookCreate, Book, BorrowingCreate, Borrowing, ReservationCreate, Reservation
+from src.schemas.book_detail import BookCreate, Book, BorrowingCreate, Borrowing, ReservationCreate, Reservation
 from src.utils.token import decode_token_user_id
 from typing import List
 import datetime
@@ -12,12 +12,7 @@ borrowing_router = APIRouter()
 
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+    return SessionLocal()
 # Borrowing Endpoints
 @borrowing_router.post("/borrowings/", response_model=Borrowing)
 def create_borrowing(borrowing: BorrowingCreate, db: Session = Depends(get_db)):
