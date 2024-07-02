@@ -1,5 +1,3 @@
-
-
 from fastapi import APIRouter,HTTPException,Header
 from typing import List
 from database.Database import SessionLocal
@@ -18,9 +16,6 @@ from datetime import datetime,timedelta
 from src.utils.Otp_Utils import generate_otp
 
 
-
-
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 user=APIRouter()
@@ -28,7 +23,6 @@ db= SessionLocal()
 
 
  # ----------------------------------------------encode_token_id------------------------------------------------------
-
 @user.get("/encode_token_id")
 def encode_token_id(id:str):
     access_token=get_encode_token(id)
@@ -37,32 +31,6 @@ def encode_token_id(id:str):
 
 
  # ----------------------------------------------Create_User_post------------------------------------------------------
-
-
-
-# @user.post("/Create_User_post",response_model=Users)
-# def create_register_user(user:Users):
-#     find_same_email_or_uname=db.query(User).filter(User.email == user.email or User.username == user.username).first()
-#     if find_same_email_or_uname :
-#         raise HTTPException (status_code= 401,detail="Same E-mail or username found please try another one!!!!!!")
-#     new_user=User(
-#     id=str(uuid.uuid4()),
-#     first_name = user.first_name,
-#     last_name =user.last_name,
-#     username =user.username,
-#     email =user.email,
-#     mobile_no =user.mobile_no,
-#     password =pwd_context.hash(user.password),
-#     bio =user.bio,
-#     role =user.role,
-#     address =user.address,
-#     )
-#     db.add(new_user)
-#     db.commit()
-#     return new_user
-
-
-
 @user.post("/Create_User_post", response_model=Users)
 def create_register_user(user: Users):
     if db.query(User).filter(User.email == user.email).first():
@@ -99,9 +67,8 @@ def create_register_user(user: Users):
     return new_user
 
 
+
 # ----------------------------------------------get_all_users-----------------------------------------------------
-
-
 @user.get("/get_all_users",response_model=List[Users])
 def get_all_user():
     db_user=db.query(User).filter(User.is_active == True,User.is_verified == True).all()
@@ -111,11 +78,7 @@ def get_all_user():
 
 
 
- # ----------------------------------------------get_user_by_token_id------------------------------------------------------
-
-
-
-
+ # ----------------------------------------------get_employee_by_id------------------------------------------------------
 @user.get("/get_user_by_token_id/", response_model=Users)
 def get_employee_by_id(token = Header(...)):
     user_id=decode_token_user_id(token)
@@ -125,28 +88,8 @@ def get_employee_by_id(token = Header(...)):
     return db_user
 
 
-# # ----------------------------------------------update_user_by_token------------------------------------------------------
 
-# @user.put("/update_user_by_token/")
-# def update_user_data(user: Users, token = Header(...)):
-#     user_id = decode_token_user_id(token)
-#     db_user = db.query(User).filter(User.id == user_id, User.is_active == True,User.is_verified == True).first()
-#     if db_user is None:
-#         raise HTTPException(status_code=404, detail="User Not Found!!!!")
-#     db_user.first_name = user.first_name,
-#     db_user.last_name =user.last_name,
-#     db_user.username =user.username,
-#     db_user.email =user.email,
-#     db_user.mobile_no =user.mobile_no,
-#     db_user.password =pwd_context.hash(user.password),
-#     db_user.bio =user.bio,
-#     db_user.role =user.role,
-#     db_user.address =user.address
-    
-#     db.commit()
-#     return "Your Detail Changed Successfully!!!!!!!!!!!"
-
-
+# ----------------------------------------------update_user_by_token------------------------------------------------------
 @user.put("/update_user_by_token/")
 def update_user_data(user: Users, token: str = Header(...)):
     user_id = decode_token_user_id(token)
@@ -180,8 +123,8 @@ def update_user_data(user: Users, token: str = Header(...)):
     return {"message": "Your details have been successfully updated!"}
 
 
-# ----------------------------------------------update[PATCH]_user_by_token------------------------------------------------------
 
+# ----------------------------------------------update[PATCH]_user_by_token------------------------------------------------------
 @user.patch("/update_user_patch")
 def update_employee_patch(employeee: UsersPatch,token = Header(...)):
     user_id = decode_token_user_id(token)
@@ -196,8 +139,8 @@ def update_employee_patch(employeee: UsersPatch,token = Header(...)):
     return {"message": "Details changed successfully", "User": find_user}
 
 
-# ----------------------------------------------Delete_User_by_token------------------------------------------------------
 
+# ----------------------------------------------Delete_User_by_token------------------------------------------------------
 @user.delete("/delete_user_by_token/")
 def delete_employee(token = Header(...)):
     emp_id=decode_token_user_id(token)
@@ -211,14 +154,7 @@ def delete_employee(token = Header(...)):
 
 
 
-
-
-
-
-
 # ----------------------------------------------forgotpass_user_by_token------------------------------------------------------    
-
-    
 @user.put("/forgotpass_user_by_token/")
 def forgotpass_user_by_token(new_pass:str,token =Header(...)):
     user_id=decode_token_user_id(token)
@@ -230,8 +166,8 @@ def forgotpass_user_by_token(new_pass:str,token =Header(...)):
     return f"Password Change Successfully"
 
 
-# ----------------------------------------------reset_pass_user_token------------------------------------------------------    
 
+# ----------------------------------------------reset_pass_user_token------------------------------------------------------    
 @user.put("/reset_pass_user_token/")
 def reset_pass_user(old_pass: str, new_pass: str, token = Header(...)):
     user_id = decode_token_user_id(token)
@@ -246,14 +182,12 @@ def reset_pass_user(old_pass: str, new_pass: str, token = Header(...)):
         raise HTTPException(status_code=400, detail="Old password does not match")
 
 
-# ---------------------------------------------encode_token_login----------------------------------------------------- 
 
+# ---------------------------------------------encode_token_login----------------------------------------------------- 
 @user.get("/encode_token_login")
 def encode_token_id(id:str,password:str,email:str):
     access_token=login_token(id,password,email)
     return access_token
-
-
 
 
 # ----------------------------------------------LOGIN_USER-----------------------------------------------------    
@@ -272,7 +206,7 @@ def logging_user(email:str, password:str):
 
 
 
-
+# ----------------------------------------------OTP------------------------------------------------------
 Otp=APIRouter()
 db= SessionLocal()
 
@@ -312,7 +246,6 @@ def send_otp_email(email: str, otp_code: str):
         print(f"Failed to send email: {e}")
 
 # --------------------------------------------------GENERATE_OTP ------------------------------------------------------------
-
 @Otp.post("/generate_otp")
 def generate_otp_endpoint(request: OTPRequest):
     email = request.email  
@@ -325,9 +258,7 @@ def generate_otp_endpoint(request: OTPRequest):
 
 
 
-
 # --------------------------------------------------VERIFICATION_OTP ------------------------------------------------------------
-
 @Otp.post("/verify_otp")
 def verify_otp(otp_verify: OTPVerify):
     otp_entry = db.query(OTP).filter(

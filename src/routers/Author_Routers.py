@@ -5,10 +5,12 @@ from database.Database import SessionLocal
 from datetime import datetime
 from src.schemas.Book_Detail import  AuthorUpdate ,AuthorBase
 
-author_router = APIRouter()
 
+author_router = APIRouter()
 db = SessionLocal()
 
+
+# ----------------------------------------------create_author------------------------------------------------------
 @author_router.post("/create_author", response_model=AuthorBase)
 def create_author(author: AuthorBase):
     db_author = Author(
@@ -24,6 +26,8 @@ def create_author(author: AuthorBase):
 
 
 
+
+# ----------------------------------------------update_author------------------------------------------------------
 @author_router.put("/update_author", response_model=AuthorBase)
 def update_author(author_id: str, author: AuthorUpdate):
     db_author = db.query(Author).filter(Author.id == author_id).first()
@@ -35,6 +39,7 @@ def update_author(author_id: str, author: AuthorUpdate):
 
 
 
+# ----------------------------------------------delete_author------------------------------------------------------
 @author_router.delete("/delete_author")
 def delete_author(author_id: str):
     db_author = db.query(Author).filter(Author.id == author_id).first()

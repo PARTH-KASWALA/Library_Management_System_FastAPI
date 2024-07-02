@@ -1,8 +1,9 @@
-
 from pydantic import BaseModel,EmailStr
 from typing import Optional
 from datetime import datetime
 
+
+#------------------User------------------------
 class UserBase(BaseModel):
     username: str
     email: str
@@ -14,7 +15,6 @@ class UserCreate(BaseModel):
     password: str
 
 class Users(BaseModel):
-   
     first_name :str
     last_name :str
     username :str
@@ -42,6 +42,7 @@ class UsersPatch(BaseModel):
 
 
 
+#------------------OTP------------------------
 class OTPRequest(BaseModel):
     email: EmailStr
 class OTPVerify(BaseModel):

@@ -7,7 +7,7 @@ from database.Database import Base
 
 
 
-
+# ----------------------------------------------User Table------------------------------------------------------
 class User(Base):
     __tablename__ = "users"
 
@@ -21,6 +21,7 @@ class User(Base):
     bio = Column(String(100), nullable=False)
     role = Column(String(100), default=False)
     address = Column(String(200), default=False)
+    
     is_deleted = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.now)

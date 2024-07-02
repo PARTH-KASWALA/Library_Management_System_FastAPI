@@ -3,6 +3,8 @@ import uuid
 from datetime import datetime
 from database.Database import Base
 
+
+# ----------------------------------------------Reservation Table------------------------------------------------------
 class Reservation(Base):
     __tablename__ = "reservations"
 
@@ -10,6 +12,7 @@ class Reservation(Base):
     user_id = Column(String(100), ForeignKey('users.id'), nullable=False)
     book_id = Column(String(100), ForeignKey('books.id'), nullable=False)
     reservation_date = Column(DateTime, default=datetime.now)
+    
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.now)
     modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)

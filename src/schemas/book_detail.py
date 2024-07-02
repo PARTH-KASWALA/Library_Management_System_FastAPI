@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, date
@@ -23,20 +22,19 @@ class BookCreate(BaseModel):
     copies_available: int
 
 
+
 #-------------Author Schemas----------------
 class AuthorBase(BaseModel):
     name: str
     bio: Optional[str] = None
-
+    
 class AuthorCreate(AuthorBase):
     name: str
     bio: Optional[str] = None
-
-
+    
 class AuthorUpdate(AuthorBase):
     name: str
     bio: Optional[str] = None
-
 
 class Author(AuthorBase):
     created_at: datetime
@@ -45,8 +43,6 @@ class Author(AuthorBase):
 
 
 #------------------Category------------------------
-
-
 class CategoryBase(BaseModel):
     name: str
     description: str
@@ -62,7 +58,6 @@ class CategoryUpdate(CategoryBase):
     name : str
     description: str
 
-
 class Category(CategoryBase):
     id: str
     name: str
@@ -71,10 +66,7 @@ class Category(CategoryBase):
  
 
 
-
 #------------------Borrowing------------------------
-
-
 class Borrowing(BaseModel):
     user_id: str
     book_id: str
@@ -89,9 +81,7 @@ class BorrowingCreate(BaseModel):
 
 
 
-
 #------------------Reservation------------------------
-
 class ReservationBase(BaseModel):
     user_id: str
     book_id: str

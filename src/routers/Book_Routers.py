@@ -1,18 +1,16 @@
-# # src/routers/book.py
-
 from fastapi import APIRouter
 from sqlalchemy.orm import Session
 from src.models.Book import Book
 from src.schemas.Book_Detail import BookCreate
 from database.Database import SessionLocal
+import uuid
+
+
 book_router = APIRouter()
-
-# Function to create a new database session
-
 db = SessionLocal()
 
-import uuid
-# Book Endpoints
+
+# ----------------------------------------------create_book------------------------------------------------------
 @book_router.post("/create_book/")
 def create_book(book: BookCreate):
         db_book = Book(

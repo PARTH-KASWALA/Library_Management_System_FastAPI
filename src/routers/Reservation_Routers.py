@@ -6,13 +6,11 @@ from src.schemas.Book_Detail import  ReservationCreate, ReservationBase
 from typing import List
 
 
-
 reservation_router = APIRouter()
 db = SessionLocal()
 
 
-
-# Reservation Endpoints
+# ----------------------------------------------create_reservation------------------------------------------------------
 @reservation_router.post("/create_reservation/", response_model=ReservationBase)
 def create_reservation(reservation: ReservationCreate):
     new_reservation = Reservation(
@@ -27,6 +25,8 @@ def create_reservation(reservation: ReservationCreate):
 
 
 
+
+# ----------------------------------------------get_reservations------------------------------------------------------
 @reservation_router.get("/reservations/", response_model=List[ReservationBase])
 def get_reservations():
     return db.query(Reservation).all()

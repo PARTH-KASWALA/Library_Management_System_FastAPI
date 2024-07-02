@@ -5,7 +5,7 @@ from database.Database import Base
 
 
 
-
+# ----------------------------------------------Borrowing Table------------------------------------------------------
 class Borrowing(Base):
     __tablename__ = "borrowings"
 
