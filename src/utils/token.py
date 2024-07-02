@@ -1,5 +1,5 @@
 from datetime import datetime,timedelta
-from fastapi import HTTPException,status,Security
+from fastapi import HTTPException,status
 from dotenv import load_dotenv
 import os
 from jose import jwt,JWTError

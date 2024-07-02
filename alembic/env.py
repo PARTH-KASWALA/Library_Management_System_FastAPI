@@ -14,16 +14,18 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+from database.Database import Base
+from src.models.Author import Author
+from src.models.Book import Book
+from src.models.Models_Lib import User
+from src.models.OTP import OTP
+from src.models.Borrowing import Borrowing
+from src.models.Category import Category
+from src.models.Reservation import Reservation
+from config import db_url
 
-from dotenv import load_dotenv
-from database.database import Base
-from src.models.models_Lib import User
-import os
-load_dotenv()
-db_url = os.environ.get("DB_URL")
 config = context.config
 config.set_section_option(config.config_ini_section, "sqlalchemy.url", db_url)
-
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel

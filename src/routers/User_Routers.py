@@ -1,21 +1,21 @@
 
 
-from fastapi import FastAPI,APIRouter,Depends,HTTPException,Header
+from fastapi import APIRouter,HTTPException,Header
 from typing import List
-from database.database import SessionLocal
+from database.Database import SessionLocal
 import uuid
 from passlib.context import CryptContext
-from src.models.models_Lib import User,OTP
-from src.schemas.schemas_Lib import Users,UserBase,UserCreate,UserUpdate,UsersPatch
-from src.utils.token import get_encode_token,decode_token_user_id,decode_token_password,decode_token_user_name,login_token,decode_token_email
-from src.schemas.schemas_Lib import OTPRequest,OTPVerify
-import string
+from src.models.OTP import OTP
+from src.models.Models_Lib import User
+from src.schemas.Schemas_Lib import Users,UsersPatch
+from src.utils.Token import get_encode_token,decode_token_user_id,login_token
+from src.schemas.Schemas_Lib import OTPRequest,OTPVerify
 import smtplib
 import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime,timedelta
-from src.utils.otp_utils import generate_otp
+from src.utils.Otp_Utils import generate_otp
 
 
 
@@ -34,29 +34,72 @@ def encode_token_id(id:str):
     access_token=get_encode_token(id)
     return access_token
 
+
+
  # ----------------------------------------------Create_User_post------------------------------------------------------
 
 
 
-@user.post("/Create_User_post",response_model=Users)
-def create_register_user(user:Users):
-    new_user=User(
-    first_name = user.first_name,
-    last_name =user.last_name,
-    username =user.username,
-    email =user.email,
-    mobile_no =user.mobile_no,
-    password =pwd_context.hash(user.password),
-    bio =user.bio,
-    role =user.role,
-    address =user.address,
+# @user.post("/Create_User_post",response_model=Users)
+# def create_register_user(user:Users):
+#     find_same_email_or_uname=db.query(User).filter(User.email == user.email or User.username == user.username).first()
+#     if find_same_email_or_uname :
+#         raise HTTPException (status_code= 401,detail="Same E-mail or username found please try another one!!!!!!")
+#     new_user=User(
+#     id=str(uuid.uuid4()),
+#     first_name = user.first_name,
+#     last_name =user.last_name,
+#     username =user.username,
+#     email =user.email,
+#     mobile_no =user.mobile_no,
+#     password =pwd_context.hash(user.password),
+#     bio =user.bio,
+#     role =user.role,
+#     address =user.address,
+#     )
+#     db.add(new_user)
+#     db.commit()
+#     return new_user
+
+
+
+@user.post("/Create_User_post", response_model=Users)
+def create_register_user(user: Users):
+    if db.query(User).filter(User.email == user.email).first():
+        raise HTTPException(
+            status_code=401,
+            detail="Same email found. Please try another one!"
+        )
+    if db.query(User).filter(User.username == user.username).first():
+        raise HTTPException(
+            status_code=401,
+            detail="Same username found. Please try another one!"
+        )
+    if db.query(User).filter(User.mobile_no == user.mobile_no).first():
+        raise HTTPException(
+            status_code=401,
+            detail="Same mobile number found. Please try another one!"
+        )
+
+    new_user = User(
+        id=str(uuid.uuid4()),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        username=user.username,
+        email=user.email,
+        mobile_no=user.mobile_no,
+        password=pwd_context.hash(user.password),
+        bio=user.bio,
+        role=user.role,
+        address=user.address,
     )
     db.add(new_user)
     db.commit()
+    db.refresh(new_user)
     return new_user
 
 
- # ----------------------------------------------get_all_users-----------------------------------------------------
+# ----------------------------------------------get_all_users-----------------------------------------------------
 
 
 @user.get("/get_all_users",response_model=List[Users])
@@ -81,26 +124,60 @@ def get_employee_by_id(token = Header(...)):
         raise HTTPException(status_code=404, detail="User Not Found !!!")
     return db_user
 
+
 # # ----------------------------------------------update_user_by_token------------------------------------------------------
 
+# @user.put("/update_user_by_token/")
+# def update_user_data(user: Users, token = Header(...)):
+#     user_id = decode_token_user_id(token)
+#     db_user = db.query(User).filter(User.id == user_id, User.is_active == True,User.is_verified == True).first()
+#     if db_user is None:
+#         raise HTTPException(status_code=404, detail="User Not Found!!!!")
+#     db_user.first_name = user.first_name,
+#     db_user.last_name =user.last_name,
+#     db_user.username =user.username,
+#     db_user.email =user.email,
+#     db_user.mobile_no =user.mobile_no,
+#     db_user.password =pwd_context.hash(user.password),
+#     db_user.bio =user.bio,
+#     db_user.role =user.role,
+#     db_user.address =user.address
+    
+#     db.commit()
+#     return "Your Detail Changed Successfully!!!!!!!!!!!"
+
+
 @user.put("/update_user_by_token/")
-def update_user_data(user: Users, token = Header(...)):
+def update_user_data(user: Users, token: str = Header(...)):
     user_id = decode_token_user_id(token)
-    db_user = db.query(User).filter(User.id == user_id, User.is_active == True,User.is_verified == True).first()
+    db_user = db.query(User).filter(User.id == user_id, User.is_active == True, User.is_verified == True).first()
+    
     if db_user is None:
         raise HTTPException(status_code=404, detail="User Not Found!!!!")
-    db_user.first_name = user.first_name,
-    db_user.last_name =user.last_name,
-    db_user.username =user.username,
-    db_user.email =user.email,
-    db_user.mobile_no =user.mobile_no,
-    db_user.password =pwd_context.hash(user.password),
-    db_user.bio =user.bio,
-    db_user.role =user.role,
-    db_user.address =user.address
+
+    if db.query(User).filter(User.email == user.email, User.id != user_id).first():
+        raise HTTPException(status_code=401, detail="Same email found. Please try another one!")
     
+    if db.query(User).filter(User.username == user.username, User.id != user_id).first():
+        raise HTTPException(status_code=401, detail="Same username found. Please try another one!")
+    
+    if db.query(User).filter(User.mobile_no == user.mobile_no, User.id != user_id).first():
+        raise HTTPException(status_code=401, detail="Same mobile number found. Please try another one!")
+
+    db_user.first_name = user.first_name
+    db_user.last_name = user.last_name
+    db_user.username = user.username
+    db_user.email = user.email
+    db_user.mobile_no = user.mobile_no
+    db_user.password = pwd_context.hash(user.password)
+    db_user.bio = user.bio
+    db_user.role = user.role
+    db_user.address = user.address
+
     db.commit()
-    return "Your Detail Changed Successfully!!!!!!!!!!!"
+    db.refresh(db_user)
+    
+    return {"message": "Your details have been successfully updated!"}
 
 
 # ----------------------------------------------update[PATCH]_user_by_token------------------------------------------------------

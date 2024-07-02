@@ -1,66 +1,104 @@
+
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, date
 
+#------------------Book------------------------
 class BookBase(BaseModel):
     title: str
     author: str
     isbn: str
-    published_date: date
-
-class BookCreate(BookBase):
-    copies_available: int
-    author_id : int
-    category_id : int
-    description : str
-
-
+    published_date: datetime
 class Book(BookBase):
-    id: str
-    copies_available: int
     created_at: datetime
     modified_at: datetime
 
-    class Config:
-        orm_mode = True
+class BookCreate(BaseModel):
+    title: str
+    author_id: str
+    category_id: str
+    isbn: str
+    description: str
+    published_date: datetime
+    copies_available: int
+
+
+#-------------Author Schemas----------------
+class AuthorBase(BaseModel):
+    name: str
+    bio: Optional[str] = None
+
+class AuthorCreate(AuthorBase):
+    name: str
+    bio: Optional[str] = None
+
+
+class AuthorUpdate(AuthorBase):
+    name: str
+    bio: Optional[str] = None
+
+
+class Author(AuthorBase):
+    created_at: datetime
+    modified_at: datetime
 
 
 
-class BorrowingBase(BaseModel):
+#------------------Category------------------------
+
+
+class CategoryBase(BaseModel):
+    name: str
+    description: str
+    id: str
+    created_at: datetime
+    modified_at: datetime
+
+class CategoryCreate(CategoryBase):
+    id : str
+
+class CategoryUpdate(CategoryBase):
+    id : str
+    name : str
+    description: str
+
+
+class Category(CategoryBase):
+    id: str
+    name: str
+    description: str
+
+ 
+
+
+
+#------------------Borrowing------------------------
+
+
+class Borrowing(BaseModel):
     user_id: str
     book_id: str
-
-class BorrowingCreate(BorrowingBase):
-    pass
-
-class Borrowing(BorrowingBase):
-    id: str
     borrow_date: datetime
     return_date: Optional[datetime] = None
-    due_date: datetime
-    is_returned: bool
-    created_at: datetime
-    modified_at: datetime
 
-    class Config:
-        orm_mode = True
-
+class BorrowingCreate(BaseModel):
+    user_id: str
+    book_id: str
+    borrow_date: datetime
+    return_date: Optional[datetime] = None
 
 
+
+
+#------------------Reservation------------------------
 
 class ReservationBase(BaseModel):
     user_id: str
     book_id: str
-
-class ReservationCreate(ReservationBase):
-    pass
-
-class Reservation(ReservationBase):
-    id: str
     reservation_date: datetime
-    is_active: bool
-    created_at: datetime
-    modified_at: datetime
+    
+class ReservationCreate(BaseModel):
+    reservation_date: datetime
+    user_id: str
+    book_id: str
 
-    class Config:
-        orm_mode = True
