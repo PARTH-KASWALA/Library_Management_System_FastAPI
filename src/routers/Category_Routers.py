@@ -6,7 +6,7 @@ from src.schemas.Book_Detail import CategoryBase, CategoryUpdate,CategoryCreate
 import uuid
 
 
-category_router = APIRouter()
+category_router = APIRouter(tags=["Category"])
 db = SessionLocal()
 
 
