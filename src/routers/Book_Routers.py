@@ -6,7 +6,7 @@ from database.Database import SessionLocal
 import uuid
 
 
-book_router = APIRouter()
+book_router = APIRouter(tags=["Books"])
 db = SessionLocal()
 
 
