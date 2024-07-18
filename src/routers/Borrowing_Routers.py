@@ -9,7 +9,7 @@ from datetime import timedelta
 from typing import Optional
 
 
-borrowing_router = APIRouter()
+borrowing_router = APIRouter(tags=["Borrowing"])
 db = SessionLocal()
 
 
