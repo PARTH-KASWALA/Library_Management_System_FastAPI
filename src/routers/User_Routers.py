@@ -18,7 +18,7 @@ from src.utils.Otp_Utils import generate_otp
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-user=APIRouter()
+user=APIRouter(tags=["User_Authentication"])
 db= SessionLocal()
 
 
@@ -207,7 +207,7 @@ def logging_user(email:str, password:str):
 
 
 # ----------------------------------------------OTP------------------------------------------------------
-Otp=APIRouter()
+Otp=APIRouter(tags=["Verify_OTP"])
 db= SessionLocal()
 
 def generate_otp(email: str):
