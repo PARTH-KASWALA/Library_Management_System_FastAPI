@@ -6,7 +6,7 @@ from datetime import datetime
 from src.schemas.Book_Detail import  AuthorUpdate ,AuthorBase
 
 
-author_router = APIRouter()
+author_router = APIRouter(tags=["Author"])
 db = SessionLocal()
 
 
