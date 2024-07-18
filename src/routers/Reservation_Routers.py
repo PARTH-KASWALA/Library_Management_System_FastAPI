@@ -6,7 +6,7 @@ from src.schemas.Book_Detail import  ReservationCreate, ReservationBase
 from typing import List
 
 
-reservation_router = APIRouter()
+reservation_router = APIRouter(tags=["Reservation"])
 db = SessionLocal()
 
 
